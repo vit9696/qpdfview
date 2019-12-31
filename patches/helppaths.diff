@@ -1,0 +1,25 @@
+=== modified file 'sources/helpdialog.cpp'
+--- sources/helpdialog.cpp	2018-05-04 05:41:59 +0000
++++ sources/helpdialog.cpp	2019-12-30 17:25:59 +0000
+@@ -45,11 +45,19 @@
+     m_textBrowser->setSearchPaths(QStringList() << QDir(QApplication::applicationDirPath()).filePath("data") << DATA_INSTALL_PATH << ":/");
+ 
+     //: Please replace by file name of localized help if available, e.g. "help_fr.html".
+-    m_textBrowser->setSource(QUrl::fromLocalFile(tr("help.html")));
++#ifdef Q_OS_MAC
++    QUrl helpUrl = QUrl::fromUserInput(QApplication::applicationDirPath() + "/../Resources/help/" + tr("help.html"));
++    QUrl defaultHelpUrl = QUrl::fromLocalFile("help.html");
++#else
++    QUrl localehelpUrl = QUrl::fromLocalFile(tr("help.html"));
++    QUrl defaultHelpUrl = QUrl::fromLocalFile("help.html");
++#endif
++
++    m_textBrowser->setSource(helpUrl);
+ 
+     if(m_textBrowser->document()->isEmpty())
+     {
+-        m_textBrowser->setSource(QUrl::fromLocalFile("help.html"));
++        m_textBrowser->setSource(defaultHelpUrl);
+     }
+ 
+     m_dialogButtonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);

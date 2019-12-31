@@ -1,0 +1,120 @@
+=== modified file 'sources/pageitem.cpp'
+--- sources/pageitem.cpp	2017-04-19 21:01:25 +0000
++++ sources/pageitem.cpp	2019-12-30 20:57:31 +0000
+@@ -29,6 +29,7 @@
+ #include <QGraphicsScene>
+ #include <QGraphicsSceneHoverEvent>
+ #include <qmath.h>
++#include <QMap>
+ #include <QMenu>
+ #include <QMessageBox>
+ #include <QPainter>
+@@ -775,17 +792,106 @@
+     QMenu menu;
+ 
+     QAction* copyTextAction = menu.addAction(tr("Copy &text"));
++    QAction* copyCyrillicAction = menu.addAction(tr("Copy cyrillic &text"));
+     QAction* selectTextAction = menu.addAction(tr("&Select text"));
+     const QAction* copyImageAction = menu.addAction(tr("Copy &image"));
+     const QAction* saveImageToFileAction = menu.addAction(tr("Save image to &file..."));
+ 
+-    const QString text = m_page->text(m_transform.inverted().mapRect(m_rubberBand));
++    QString text = m_page->text(m_transform.inverted().mapRect(m_rubberBand));
+ 
+     copyTextAction->setVisible(!text.isEmpty());
++    copyCyrillicAction->setVisible(!text.isEmpty());
+     selectTextAction->setVisible(!text.isEmpty() && QApplication::clipboard()->supportsSelection());
+ 
+     const QAction* action = menu.exec(screenPos);
+ 
++    if(action == copyCyrillicAction)
++    {
++        static QMap<QChar, QChar> fixup = {
++            {QChar(0x16), QChar(L'—')},
++            {QChar(L'à'), QChar(L'а')},
++            {QChar(L'á'), QChar(L'б')},
++            {QChar(L'â'), QChar(L'в')},
++            {QChar(L'ã'), QChar(L'г')},
++            {QChar(L'ä'), QChar(L'д')},
++            {QChar(L'å'), QChar(L'е')},
++            {QChar(L'¼'), QChar(L'ё')},
++            {QChar(L'æ'), QChar(L'ж')},
++            {QChar(L'ç'), QChar(L'з')},
++            {QChar(L'è'), QChar(L'и')},
++            {QChar(L'é'), QChar(L'й')},
++            {QChar(L'ê'), QChar(L'к')},
++            {QChar(L'ë'), QChar(L'л')},
++            {QChar(L'ì'), QChar(L'м')},
++            {QChar(L'í'), QChar(L'н')},
++            {QChar(L'î'), QChar(L'о')},
++            {QChar(L'ï'), QChar(L'п')},
++            {QChar(L'ð'), QChar(L'р')},
++            {QChar(L'ñ'), QChar(L'с')},
++            {QChar(L'ò'), QChar(L'т')},
++            {QChar(L'ó'), QChar(L'у')},
++            {QChar(L'ô'), QChar(L'ф')},
++            {QChar(L'õ'), QChar(L'х')},
++            {QChar(L'ö'), QChar(L'ц')},
++            {QChar(L'÷'), QChar(L'ч')},
++            {QChar(L'ø'), QChar(L'щ')},
++            {QChar(L'ù'), QChar(L'щ')},
++            {QChar(L'ú'), QChar(L'ъ')},
++            {QChar(L'û'), QChar(L'ы')},
++            {QChar(L'ü'), QChar(L'ь')},
++            {QChar(L'ý'), QChar(L'э')},
++            {QChar(L'þ'), QChar(L'ю')},
++            {QChar(L'ÿ'), QChar(L'я')},
++            {QChar(L'À'), QChar(L'А')},
++            {QChar(L'Á'), QChar(L'Б')},
++            {QChar(L'Â'), QChar(L'В')},
++            {QChar(L'Ã'), QChar(L'Г')},
++            {QChar(L'Ä'), QChar(L'Д')},
++            {QChar(L'Å'), QChar(L'Е')},
++            {QChar(L'¨'), QChar(L'Ё')},
++            {QChar(L'Æ'), QChar(L'Ж')},
++            {QChar(L'Ç'), QChar(L'З')},
++            {QChar(L'È'), QChar(L'И')},
++            {QChar(L'É'), QChar(L'Й')},
++            {QChar(L'Ê'), QChar(L'К')},
++            {QChar(L'Ë'), QChar(L'Л')},
++            {QChar(L'Ì'), QChar(L'М')},
++            {QChar(L'Í'), QChar(L'Н')},
++            {QChar(L'Î'), QChar(L'О')},
++            {QChar(L'Ï'), QChar(L'П')},
++            {QChar(L'Ð'), QChar(L'Р')},
++            {QChar(L'Ñ'), QChar(L'С')},
++            {QChar(L'Ò'), QChar(L'Т')},
++            {QChar(L'Ó'), QChar(L'У')},
++            {QChar(L'Ô'), QChar(L'Ф')},
++            {QChar(L'Õ'), QChar(L'Х')},
++            {QChar(L'Ö'), QChar(L'Ц')},
++            {QChar(L'×'), QChar(L'Ч')},
++            {QChar(L'Ù'), QChar(L'Щ')},
++            {QChar(L'Ù'), QChar(L'Щ')},
++            {QChar(L'Ú'), QChar(L'Ъ')},
++            {QChar(L'Û'), QChar(L'Ы')},
++            {QChar(L'Ü'), QChar(L'Ь')},
++            {QChar(L'Ý'), QChar(L'Э')},
++            {QChar(L'Þ'), QChar(L'Ю')},
++            {QChar(L'ß'), QChar(L'Я')},
++        };
++
++        QChar *data = text.data();
++        QMap<QChar, QChar>::iterator it;
++        while (!data->isNull())
++        {
++            it = fixup.find(*data);
++            if (it != fixup.end())
++            {
++                *data = *it;
++            }
++            ++data;
++        }
++
++        action = copyTextAction;
++    }
++
+     if(action == copyTextAction || action == selectTextAction)
+     {
+         if(action == copyTextAction)
+

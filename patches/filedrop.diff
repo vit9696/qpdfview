@@ -1,0 +1,93 @@
+=== modified file 'sources/main.cpp'
+--- sources/main.cpp	2019-01-07 22:34:00 +0000
++++ sources/main.cpp	2019-12-30 18:00:39 +0000
+@@ -28,6 +28,7 @@
+ #include <QApplication>
+ #include <QDebug>
+ #include <QDir>
++#include <QFileOpenEvent>
+ #include <QInputDialog>
+ #include <QLibraryInfo>
+ #include <QMessageBox>
+@@ -453,6 +459,44 @@
+ 
+ } // anonymous
+ 
++class QPDFViewApplication : public QApplication
++{
++public:
++    QPDFViewApplication(int &argc, char **argv)
++        : QApplication(argc, argv)
++    {
++        setOrganizationDomain("local.qpdfview");
++        setOrganizationName("qpdfview");
++        setApplicationName("qpdfview");
++
++        setApplicationVersion(APPLICATION_VERSION);
++
++#ifdef Q_OS_MAC
++        // On macOS menu icons should not be shown, and app icons are determined by .app bundle.
++        setAttribute(Qt::AA_DontShowIconsInMenus);
++#else
++        setWindowIcon(QIcon(":icons/qpdfview"));
++#endif
++
++#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
++        setAttribute(Qt::AA_UseHighDpiPixmaps);
++#endif // QT_VERSION
++    }
++
++    virtual bool event(QEvent *event)
++    {
++        if(event->type() == QEvent::FileOpen) {
++            // On macOS and potentially other systems this handles "Open With" and "Drag & Drop" after exec().
++            QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
++            File file;
++            file.filePath = openEvent->file();
++            mainWindow->jumpToPageOrOpenInNewTab(file.filePath, file.page, true, file.enclosingBox, quiet);
++        }
++
++        return QApplication::event(event);
++    }
++};
++
+ int main(int argc, char** argv)
+ {
+     qRegisterMetaType< QList< QRectF > >("QList<QRectF>");
+@@ -461,21 +505,7 @@
+ 
+     parseWorkbenchExtendedSelection(argc, argv);
+ 
+-    QApplication application(argc, argv);
+-
+-    QApplication::setOrganizationDomain("local.qpdfview");
+-    QApplication::setOrganizationName("qpdfview");
+-    QApplication::setApplicationName("qpdfview");
+-
+-    QApplication::setApplicationVersion(APPLICATION_VERSION);
+-
+-    QApplication::setWindowIcon(QIcon(":icons/qpdfview"));
+-
+-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+-
+-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+-
+-#endif // QT_VERSION
++    QPDFViewApplication application(argc, argv);
+ 
+     loadTranslators();
+ 
+=== modified file 'sources/mainwindow.cpp'
+--- sources/mainwindow.cpp  2018-12-04 16:19:09 +0000
++++ sources/mainwindow.cpp  2019-12-30 18:57:36 +0000
+@@ -3120,7 +3120,10 @@
+     }
+     else
+     {
++#ifndef Q_OS_MAC
++        // On macOS menu icons are not part of the design.
+         action->setIconVisibleInMenu(true);
++#endif
+ 
+         connect(action, SIGNAL(triggered()), member);
+     }

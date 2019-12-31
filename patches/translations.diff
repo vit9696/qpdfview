@@ -1,0 +1,17 @@
+=== modified file 'sources/main.cpp'
+--- sources/main.cpp	2019-01-07 22:34:00 +0000
++++ sources/main.cpp	2019-12-30 18:00:39 +0000
+@@ -140,7 +141,12 @@
+     loadTranslator(toolkitTranslator, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+ 
+     QTranslator* applicationTranslator = new QTranslator(qApp);
+-    if(loadTranslator(applicationTranslator, "qpdfview", QDir(QApplication::applicationDirPath()).filePath("data"))) {}
++#ifdef Q_OS_MAC
++    QDir resourcesDir = QDir(QApplication::applicationDirPath() + "/../Resources/");
++#else
++    QDir resourcesDir = QDir(QApplication::applicationDirPath());
++#endif
++    if(loadTranslator(applicationTranslator, "qpdfview", resourcesDir.filePath("data"))) {}
+     else if(loadTranslator(applicationTranslator, "qpdfview", DATA_INSTALL_PATH)) {}
+     else if(loadTranslator(applicationTranslator, "qpdfview", ":/")) {}
+ }
