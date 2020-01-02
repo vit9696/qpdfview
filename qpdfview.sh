@@ -6,9 +6,10 @@ SELF_DIR="$(pwd)"
 popd &>/dev/null
 
 WORK_DIR="$(pwd)"
+QPDFVIEW_BDIR="${WORK_DIR}/build"
 QPDFVIEW_DIR="${WORK_DIR}/dist"
-QPDFVIEW_APP="${QPDFVIEW_DIR}/qpdfview.app"
-QPDFVIEW_REV=2094
+QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
+QPDFVIEW_REV=2101
 QPDFVIEW_EDITION=a
 
 # Add Qt tools to PATH
@@ -45,9 +46,13 @@ obtain_sources() {
 
 compile_bundle() {
   echo "Compiling bundle..."
-  rm -rf "${QPDFVIEW_APP}" || exit 1
-  pushd "${QPDFVIEW_DIR}" &>/dev/null || exit 1
-  qmake CONFIG+=with_fitz qpdfview.pro || exit 1
+  rm -rf "${QPDFVIEW_APP}" "${QPDFVIEW_BDIR}" || exit 1
+  mkdir -p "${QPDFVIEW_BDIR}" || exit 1
+  pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
+  qmake APP_DIR_DATA_PATH=../Resources CONFIG+=with_fitz \
+    FITZ_PLUGIN_INCLUDEPATH=/opt/local/include \
+    FITZ_PLUGIN_LIBS="-L/opt/local/lib -lmupdf -lmupdf-third -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2" \
+    "${QPDFVIEW_DIR}/qpdfview.pro" || exit 1
   make -j || exit 1
   popd &>/dev/null || exit 1
 }
@@ -55,14 +60,12 @@ compile_bundle() {
 bundle_plugins() {
   echo "Bundling plugins..."
   rm -rf "${QPDFVIEW_APP}/Contents/MacOS"/*.dylib || exit 1
-  cp "${QPDFVIEW_DIR}"/*.dylib "${QPDFVIEW_APP}/Contents/MacOS" || exit 1
+  cp "${QPDFVIEW_BDIR}"/*.dylib "${QPDFVIEW_APP}/Contents/MacOS" || exit 1
 }
 
 bundle_translations() {
   echo "Bundling translation files..."
-  local tl_dir="${QPDFVIEW_APP}/Contents/Resources/data"
-  rm -rf "${tl_dir}" || exit 1
-  mkdir -p "${tl_dir}" || exit 1
+  local tl_dir="${QPDFVIEW_APP}/Contents/Resources"
   for tl in "${QPDFVIEW_DIR}/translations"/*.ts; do
     tl_file=$(basename "${tl/.ts/.qm}")
     lconvert -i "${tl}" -o "${tl_dir}/${tl_file}" || exit 1
@@ -71,9 +74,8 @@ bundle_translations() {
 
 bundle_help() {
   echo "Bundling help data..."
-  local help_dir="${QPDFVIEW_APP}/Contents/Resources/help"
-  rm -rf "${help_dir}" || exit 1
-  cp -r "${QPDFVIEW_DIR}/help" "${help_dir}" || exit 1
+  local help_dir="${QPDFVIEW_APP}/Contents/Resources"
+  cp -r "${QPDFVIEW_DIR}/help"/* "${help_dir}" || exit 1
 }
 
 bundle_icon() {
@@ -118,9 +120,9 @@ deploy_bundle() {
 
 archive_bundle() {
   echo "Archiving bundle..."
-  pushd "${QPDFVIEW_DIR}" &>/dev/null || exit 1
+  pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
 
-  local version=$(cat qpdfview.pri | grep APPLICATION_VERSION | sed 's/.*= //')
+  local version=$(cat "${QPDFVIEW_DIR}/qpdfview.pri" | grep APPLICATION_VERSION | sed 's/.*= //')
   local name="qpdfview-${version}-r${QPDFVIEW_REV}${QPDFVIEW_EDITION}.zip"
   # codesign -s "Apple Developer" --deep qpdfview.app || exit 1
   zip -qry ../"${name}" qpdfview.app || exit 1

@@ -1,6 +1,6 @@
 === modified file 'sources/pageitem.cpp'
---- sources/pageitem.cpp	2017-04-19 21:01:25 +0000
-+++ sources/pageitem.cpp	2019-12-30 20:57:31 +0000
+--- sources/pageitem.cpp	2020-01-01 08:54:36 +0000
++++ sources/pageitem.cpp	2020-01-02 13:30:20 +0000
 @@ -29,6 +29,7 @@
  #include <QGraphicsScene>
  #include <QGraphicsSceneHoverEvent>
@@ -9,7 +9,7 @@
  #include <QMenu>
  #include <QMessageBox>
  #include <QPainter>
-@@ -775,17 +792,106 @@
+@@ -783,17 +784,106 @@
      QMenu menu;
  
      QAction* copyTextAction = menu.addAction(tr("Copy &text"));

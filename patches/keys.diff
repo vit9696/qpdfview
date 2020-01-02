@@ -1,7 +1,7 @@
 === modified file 'sources/mainwindow.cpp'
---- sources/mainwindow.cpp	2018-12-04 16:19:09 +0000
-+++ sources/mainwindow.cpp	2019-12-30 18:57:36 +0000
-@@ -3147,21 +3150,47 @@
+--- sources/mainwindow.cpp	2020-01-01 09:12:21 +0000
++++ sources/mainwindow.cpp	2020-01-02 13:27:36 +0000
+@@ -3147,11 +3150,36 @@
  
  void MainWindow::createActions()
  {
@@ -39,9 +39,7 @@
      m_saveAction = createAction(tr("&Save"), QLatin1String("save"), QLatin1String("document-save"), QKeySequence::Save, SLOT(on_save_triggered()));
      m_saveAsAction = createAction(tr("Save &as..."), QLatin1String("saveAs"), QLatin1String("document-save-as"), QKeySequence::SaveAs, SLOT(on_saveAs_triggered()));
      m_saveCopyAction = createAction(tr("Save &copy..."), QLatin1String("saveCopy"), QIcon(), QKeySequence(), SLOT(on_saveCopy_triggered()));
-     m_printAction = createAction(tr("&Print..."), QLatin1String("print"), QLatin1String("document-print"), QKeySequence::Print, SLOT(on_print_triggered()));
-     m_exitAction = createAction(tr("E&xit"), QLatin1String("exit"), QIcon::fromTheme("application-exit"), QKeySequence::Quit, SLOT(close()));
-+    m_exitAction->setMenuRole(QAction::QuitRole);
+@@ -3161,8 +3189,8 @@
  
      // edit
  
@@ -52,7 +50,7 @@
  
      const QList< QKeySequence > firstPageShortcuts = QList< QKeySequence >()
              << QKeySequence(Qt::Key_Home)
-@@ -3179,7 +3208,7 @@
+@@ -3180,7 +3208,7 @@
  
      m_setFirstPageAction = createAction(tr("&Set first page..."), QLatin1String("setFirstPage"), QIcon(), QKeySequence(), SLOT(on_setFirstPage_triggered()));
  
@@ -61,15 +59,7 @@
  
      m_jumpBackwardAction = createAction(tr("Jump &backward"), QLatin1String("jumpBackward"), QLatin1String("media-seek-backward"), QKeySequence(Qt::CTRL + Qt::Key_Return), SLOT(on_jumpBackward_triggered()));
      m_jumpForwardAction = createAction(tr("Jump for&ward"), QLatin1String("jumpForward"), QLatin1String("media-seek-forward"), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Return), SLOT(on_jumpForward_triggered()));
-@@ -3193,6 +3222,7 @@
-     m_addAnnotationModeAction = createAction(tr("&Add annotation"), QLatin1String("addAnnotationMode"), QLatin1String("mail-attachment"), QKeySequence(Qt::CTRL + Qt::Key_A), SLOT(on_addAnnotationMode_triggered(bool)), true);
- 
-     m_settingsAction = createAction(tr("Settings..."), QString(), QIcon(), QKeySequence(), SLOT(on_settings_triggered()));
-+    m_settingsAction->setMenuRole(QAction::PreferencesRole);
- 
-     // view
- 
-@@ -3202,16 +3232,15 @@
+@@ -3204,16 +3232,15 @@
      m_multiplePagesModeAction = createAction(tr("&Multiple pages"), QLatin1String("multiplePagesMode"), QIcon(QLatin1String(":icons/multiple-pages")), QKeySequence(Qt::CTRL + Qt::Key_4), SLOT(on_multiplePagesMode_triggered(bool)), true);
  
      m_rightToLeftModeAction = createAction(tr("Right to left"), QLatin1String("rightToLeftMode"), QIcon(QLatin1String(":icons/right-to-left")), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), SLOT(on_rightToLeftMode_triggered(bool)), true);
@@ -90,7 +80,7 @@
  
      m_invertColorsAction = createAction(tr("Invert colors"), QLatin1String("invertColors"), QIcon(), QKeySequence(Qt::CTRL + Qt::Key_I), SLOT(on_invertColors_triggered(bool)), true);
      m_convertToGrayscaleAction = createAction(tr("Convert to grayscale"), QLatin1String("convertToGrayscale"), QIcon(), QKeySequence(Qt::CTRL + Qt::Key_U), SLOT(on_convertToGrayscale_triggered(bool)), true);
-@@ -3222,8 +3251,8 @@
+@@ -3224,8 +3251,8 @@
  
      m_fontsAction = createAction(tr("Fonts..."), QString(), QIcon(), QKeySequence(), SLOT(on_fonts_triggered()));
  
@@ -100,12 +90,4 @@
 +    m_presentationAction = createAction(tr("&Presentation..."), QLatin1String("presentation"), QLatin1String("x-office-presentation"), presentSeq, SLOT(on_presentation_triggered()));
  
      // tabs
- 
-@@ -3256,6 +3285,7 @@
- 
-     m_contentsAction = createAction(tr("&Contents"), QLatin1String("contents"), QIcon::fromTheme("help-contents"), QKeySequence::HelpContents, SLOT(on_contents_triggered()));
-     m_aboutAction = createAction(tr("&About"), QString(), QIcon::fromTheme("help-about"), QKeySequence(), SLOT(on_about_triggered()));
-+    m_aboutAction->setMenuRole(QAction::AboutRole);
- 
-     // context
  
