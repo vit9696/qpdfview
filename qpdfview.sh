@@ -9,8 +9,8 @@ WORK_DIR="$(pwd)"
 QPDFVIEW_BDIR="${WORK_DIR}/build"
 QPDFVIEW_DIR="${WORK_DIR}/dist"
 QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
-QPDFVIEW_REV=2101
-QPDFVIEW_EDITION=b
+QPDFVIEW_REV=2103
+QPDFVIEW_EDITION=a
 
 # Add Qt tools to PATH
 export PATH="$PATH:/opt/local/libexec/qt5/bin"

@@ -10,7 +10,6 @@ Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfvi
 - Poppler is preferred over mupdf when available.
   As a workaround one can delete `qpdfview.app/Contents/MacOS/libqpdfview_pdf.dylib`.
 - Presentation view and fullscreen may not work as expected.
-- Open recent menu is not implemented.
 - Built-in tab menu is not disabled (needs `allowsAutomaticWindowTabbing` off).
 
 ## Compilation requirements
