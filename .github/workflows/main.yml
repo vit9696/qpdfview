@@ -17,6 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set edition
+        run: |
+          QPDFVIEW_EDITION=$(git rev-list --count --first-parent HEAD)
+          echo "QPDFVIEW_EDITION=${QPDFVIEW_EDITION}" >> "$GITHUB_ENV"
+
       - name: Install dependencies
         run: brew install bzr qt mupdf libspectre poppler djvulibre imagemagick
 
