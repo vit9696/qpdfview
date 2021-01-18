@@ -26,7 +26,11 @@ jobs:
         run: brew update
 
       - name: Install Qt dependencies
-        run: brew install cmake
+        run: |
+          cmake --version
+          which cmake
+          brew link cmake
+          export PATH="/usr/local/bin:$PATH"
 
       - name: Install latest Qt
         run: brew install qt --HEAD
