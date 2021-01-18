@@ -34,6 +34,8 @@ jobs:
           echo "FITZ_PLUGIN_INCLUDEPATH=${FITZ_PLUGIN_INCLUDEPATH}" >> "$GITHUB_ENV"
           FITZ_PLUGIN_LINKPATH=$(brew --prefix mupdf-tools)/lib
           echo "FITZ_PLUGIN_LINKPATH=${FITZ_PLUGIN_LINKPATH}" >> "$GITHUB_ENV"
+          FITZ_PLUGIN_LIBS="-lmupdf -lmupdf-third -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2"
+          echo "FITZ_PLUGIN_LIBS=${FITZ_PLUGIN_LIBS}" >> "$GITHUB_ENV"
 
       - name: Compile
         run: ./qpdfview.sh
