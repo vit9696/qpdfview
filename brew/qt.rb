@@ -36,13 +36,6 @@ class Qt < Formula
   uses_from_macos "flex"
   uses_from_macos "sqlite"
 
-  # Find SDK for 11.x macOS
-  # Upstreamed, remove when Qt updates Chromium
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/92d4cf/qt/5.15.2.diff"
-    sha256 "fa99c7ffb8a510d140c02694a11e6c321930f43797dbf2fe8f2476680db4c2b2"
-  end
-
   # Patch for qmake on ARM
   # https://codereview.qt-project.org/c/qt/qtbase/+/327649
   if Hardware::CPU.arm?
