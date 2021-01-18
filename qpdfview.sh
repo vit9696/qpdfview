@@ -51,9 +51,18 @@ compile_bundle() {
   rm -rf "${QPDFVIEW_APP}" "${QPDFVIEW_BDIR}" || exit 1
   mkdir -p "${QPDFVIEW_BDIR}" || exit 1
   pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
+
+  if [ "$FITZ_PLUGIN_INCLUDEPATH" = "" ]; then
+    FITZ_PLUGIN_INCLUDEPATH=/opt/local/include
+  fi
+
+  if [ "$FITZ_PLUGIN_LINKPATH" = "" ]; then
+    FITZ_PLUGIN_LINKPATH=/opt/local/lib
+  fi
+
   qmake APP_DIR_DATA_PATH=../Resources CONFIG+=with_fitz \
-    FITZ_PLUGIN_INCLUDEPATH=/opt/local/include \
-    FITZ_PLUGIN_LIBS="-L/opt/local/lib -lmupdf -lmupdf-third -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2" \
+    FITZ_PLUGIN_INCLUDEPATH=${FITZ_PLUGIN_INCLUDEPATH} \
+    FITZ_PLUGIN_LIBS="-L${FITZ_PLUGIN_LINKPATH} -lmupdf -lmupdf-third -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2" \
     "${QPDFVIEW_DIR}/qpdfview.pro" || exit 1
   make -j || exit 1
   popd &>/dev/null || exit 1

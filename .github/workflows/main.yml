@@ -29,7 +29,11 @@ jobs:
         run: brew link --force qt
 
       - name: Activate mupdf
-        run: ln -s $(brew --prefix mupdf-tools)/include/mupdf /usr/local/include/mupdf
+        run: |
+          FITZ_PLUGIN_INCLUDEPATH=$(brew --prefix mupdf-tools)/include
+          echo "FITZ_PLUGIN_INCLUDEPATH=${FITZ_PLUGIN_INCLUDEPATH}" >> "$GITHUB_ENV"
+          FITZ_PLUGIN_LINKPATH=$(brew --prefix mupdf-tools)/lib
+          echo "FITZ_PLUGIN_LINKPATH=${FITZ_PLUGIN_LINKPATH}" >> "$GITHUB_ENV"
 
       - name: Compile
         run: ./qpdfview.sh
