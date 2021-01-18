@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Build qpdfview
+    runs-on: macos-10.15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: brew install bzr qt mupdf libspectre poppler djvulibre imagemagick
+
+      - name: Activate dependencies
+        run: brew link bzr qt mupdf libspectre poppler djvulibre imagemagick
+
+      - name: Compile
+        run: ./qpdfview.sh
+
+      - name: Create release notes
+        run: git show -s --format="%s" > release_notes.md
+
+      - name: Create release
+        if: github.repository_owner == 'vit9696'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.REVISION }}
+          release_name: qpdfview ${{ env.VERSION }} (${{ env.REVISION }})
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+
+      - name: Upload release
+        if: github.repository_owner == 'vit9696'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILENAME }}
+          asset_name: ${{ env.FILENAME }}
+          asset_content_type: application/zip

@@ -123,7 +123,15 @@ archive_bundle() {
   pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
 
   local version=$(cat "${QPDFVIEW_DIR}/qpdfview.pri" | grep APPLICATION_VERSION | sed 's/.*= //')
-  local name="qpdfview-${version}-r${QPDFVIEW_REV}${QPDFVIEW_EDITION}.zip"
+  local revision="r${QPDFVIEW_REV}${QPDFVIEW_EDITION}"
+  local name="qpdfview-${version}-${revision}.zip"
+
+  if [ "$GITHUB_ENV" != "" ]; then
+    echo "VERSION=${version}" >> "$GITHUB_ENV"
+    echo "REVISION=${revision}" >> "$GITHUB_ENV"
+    echo "FILENAME=${name}" >> "$GITHUB_ENV"
+  fi
+
   # codesign -s "Apple Developer" --deep qpdfview.app || exit 1
   zip -qry ../"${name}" qpdfview.app || exit 1
   popd &>/dev/null || exit 1
