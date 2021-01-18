@@ -26,7 +26,13 @@ jobs:
         run: brew install bzr qt mupdf-tools libspectre poppler djvulibre imagemagick
 
       - name: Activate dependencies
-        run: brew link --force qt mupdf-tools
+        run: brew link --force qt
+
+      - name: Activate mupdf
+        run: |
+          ln -s $(brew --prefix mupdf-tools)/include/mupdf /usr/local/include/mupdf
+          ln -s $(brew --prefix mupdf-tools)/lib/libmupdf-third.a /usr/local/lib/libmupdf-third.a
+          ln -s $(brew --prefix mupdf-tools)/lib/libmupdf.a /usr/local/lib/libmupdf.a
 
       - name: Compile
         run: ./qpdfview.sh
