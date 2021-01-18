@@ -25,6 +25,9 @@ jobs:
       - name: Update brew
         run: brew update
 
+      - name: Install Qt dependencies
+        run: brew install cmake
+
       - name: Install latest Qt
         run: brew install qt --HEAD
 
