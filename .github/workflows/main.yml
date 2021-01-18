@@ -23,10 +23,10 @@ jobs:
           echo "QPDFVIEW_EDITION=${QPDFVIEW_EDITION}" >> "$GITHUB_ENV"
 
       - name: Install dependencies
-        run: brew install bzr qt mupdf libspectre poppler djvulibre imagemagick
+        run: brew install bzr qt mupdf-tools libspectre poppler djvulibre imagemagick
 
       - name: Activate dependencies
-        run: brew link --force qt
+        run: brew link --force qt mupdf-tools
 
       - name: Compile
         run: ./qpdfview.sh
