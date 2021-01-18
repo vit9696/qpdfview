@@ -126,6 +126,21 @@ bundle_formats() {
   /usr/libexec/PlistBuddy -c "Merge ${SELF_DIR}/formats.plist" "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
 }
 
+bundle_fonts() {
+  if [ "$FONTCONFIG_PATH" = "" ]; then
+    if [ -f "/usr/local/etc/fonts/fonts.conf" ]; then
+      FONTCONFIG_PATH=/usr/local/etc/fonts
+    elif [ -f "/opt/local/etc/fonts/fonts.conf" ]; then
+      FONTCONFIG_PATH=/opt/local/etc/fonts
+    else
+      echo "WARN: Unable to find fonts.conf"
+      echo "Hint: Set FONTCONFIG_PATH variable!"
+      return
+    fi
+  fi
+  cp -r "$FONTCONFIG_PATH" "${QPDFVIEW_APP}/Contents/Resources/fonts" || exit 1
+}
+
 deploy_bundle() {
   echo "Deploying bundle..."
   /usr/libexec/PlistBuddy -c 'Delete CFBundleIdentifier' "${QPDFVIEW_APP}/Contents/Info.plist" &>/dev/null
@@ -160,5 +175,6 @@ bundle_translations
 bundle_help
 bundle_icon
 bundle_formats
+bundle_fonts
 deploy_bundle
 archive_bundle

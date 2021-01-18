@@ -1,0 +1,24 @@
+=== modified file 'sources/application.cpp'
+--- sources/application.cpp	2020-01-02 22:06:23 +0000
++++ sources/application.cpp	2021-01-18 17:38:22 +0000
+@@ -21,6 +21,8 @@
+ 
+ #include <QEvent>
+ #include <QFileOpenEvent>
++#include <stdlib.h>
++#include <string>
+ 
+ #include "application.h"
+ #include "mainwindow.h"
+@@ -41,6 +43,10 @@
+     // On macOS menu icons should not be shown, and app icons are determined by .app bundle.
+     setAttribute(Qt::AA_DontShowIconsInMenus);
+ 
++    // On macOS provide local font configuration file.
++    std::string fontsPath = QApplication::applicationDirPath().toStdString() + "/../Resources/fonts";
++    setenv("FONTCONFIG_PATH", fontsPath.c_str(), 0);
++
+ #else
+ 
+     setWindowIcon(QIcon(":icons/qpdfview"));
+
