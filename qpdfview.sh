@@ -146,6 +146,16 @@ deploy_bundle() {
   /usr/libexec/PlistBuddy -c 'Delete CFBundleIdentifier' "${QPDFVIEW_APP}/Contents/Info.plist" &>/dev/null
   /usr/libexec/PlistBuddy -c 'Add CFBundleIdentifier string as.vit9696.qpdfview' "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
   macdeployqt "${QPDFVIEW_APP}" || exit 1
+
+  # Ugly hack to fix libpoppler-qt5.1.dylib linkage to libpoppler.105.dylib
+  # after poppler-20.12.0 -> poppler-21.01.0 upgrade.
+  if [ -f "${QPDFVIEW_APP}/Contents/Frameworks/libpoppler-qt5.1.dylib" ]; then
+    local libpoppler_qt="${QPDFVIEW_APP}/Contents/Frameworks/libpoppler-qt5.1.dylib"
+    local libpoppler=$(otool -L "${libpoppler_qt}" | grep '/usr/local/Cellar' | head -1 | cut -d' ' -f 1 | xargs echo)
+    if [ "${libpoppler}" != "" ]; then
+      install_name_tool -change "${libpoppler}" "@executable_path/../Frameworks/$(basename "${libpoppler}")" "${libpoppler_qt}" || exit 1
+    fi
+  fi
 }
 
 archive_bundle() {
