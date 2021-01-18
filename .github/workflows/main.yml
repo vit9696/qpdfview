@@ -25,18 +25,11 @@ jobs:
       - name: Update brew
         run: brew update
 
-      - name: Install Qt dependencies
+      - name: Install Qt 5.15
         run: |
-          cmake --version
-          which cmake
-          brew link cmake
-          export PATH="/usr/local/bin:$PATH"
-
-      - name: Install latest Qt
-        run: brew install qt --HEAD
-
-      - name: Activate Qt
-        run: brew link --force qt
+          cp brew/qt.rb /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/qt.rb
+          brew install qt --HEAD
+          brew link --force qt
 
       - name: Install other dependencies
         run: brew install bzr mupdf-tools libspectre poppler djvulibre imagemagick
