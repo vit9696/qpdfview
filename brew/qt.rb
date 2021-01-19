@@ -59,12 +59,10 @@ class Qt < Formula
       -qt-pcre
       -nomake examples
       -nomake tests
-      -nomake designer
-      -nomake help
-      -nomake webkit
-      -nomake webkitwidgets
-      -nomake multimedia
-      -nomake multimediawidgets
+      -skip designer
+      -skip help
+      -skip webkit
+      -skip multimedia
       -no-rpath
       -pkg-config
       -dbus-runtime
