@@ -11,7 +11,7 @@ QPDFVIEW_DIR="${WORK_DIR}/dist"
 QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
 QPDFVIEW_REV=2112
 if [ "${QPDFVIEW_EDITION}" = "" ]; then
-  QPDFVIEW_EDITION=a
+  QPDFVIEW_EDITION=1
 fi
 
 # Add Qt tools to PATH
