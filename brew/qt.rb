@@ -60,7 +60,6 @@ class Qt < Formula
       -nomake examples
       -nomake tests
       -nomake tools
-      -skip help
       -skip webkit
       -skip multimedia
       -no-rpath
