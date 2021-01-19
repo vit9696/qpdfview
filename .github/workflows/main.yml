@@ -32,7 +32,8 @@ jobs:
           brew link --force qt
 
       - name: Install other dependencies
-        run: brew install bzr mupdf-tools libspectre poppler djvulibre imagemagick
+        # Ignore random brew failures.
+        run: brew install bzr mupdf-tools libspectre poppler djvulibre imagemagick || true
 
       - name: Activate mupdf
         run: |
