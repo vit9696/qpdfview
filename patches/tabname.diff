@@ -1,0 +1,27 @@
+=== modified file 'sources/documentview.cpp'
+--- sources/documentview.cpp	2019-05-12 09:55:28 +0000
++++ sources/documentview.cpp	2021-01-18 23:29:30 +0000
+@@ -975,6 +975,22 @@
+         title = m_fileInfo.completeBaseName();
+     }
+ 
++#ifdef Q_OS_MAC
++    // On macOS latest Qt versions have a bug of automatically detecting tab entries
++    // as menu entries with roles, causing opening files with these names result in
++    // "Preferences" window breaking. The relevant code can be found here:
++    // https://github.com/qt/qtbase/blob/1869615fc959c70a334e666ebf95ff595a3d6e67/src/plugins/platforms/cocoa/qcocoamenuitem.mm#L228-L234
++    // Reported to qpdfview: https://bugs.launchpad.net/qpdfview/+bug/1912274
++    if(title.startsWith(QCoreApplication::translate("QCocoaMenuItem", "Config"), Qt::CaseInsensitive)
++        || title.startsWith(QCoreApplication::translate("QCocoaMenuItem", "Preference"), Qt::CaseInsensitive)
++        || title.startsWith(QCoreApplication::translate("QCocoaMenuItem", "Options"), Qt::CaseInsensitive)
++        || title.startsWith(QCoreApplication::translate("QCocoaMenuItem", "Setting"), Qt::CaseInsensitive)
++        || title.startsWith(QCoreApplication::translate("QCocoaMenuItem", "Setup"), Qt::CaseInsensitive))
++    {
++        return QString(u8"\u200B") + title;
++    }
++#endif
++
+     return title;
+ }
+ 
+
