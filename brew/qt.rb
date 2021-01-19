@@ -60,20 +60,31 @@ class Qt < Formula
       -nomake examples
       -nomake tests
       -nomake tools
-      -skip webkit
-      -skip multimedia
+      -skip qt3d
+      -skip qtdeclarative
+      -skip qtdoc
+      -skip qtdocgallery
+      -skip qtgamepad
+      -skip qtgraphicaleffects
+      -skip qtlocation
+      -skip qtlottie
+      -skip qtmultimedia
+      -skip qtnetworkauth
+      -skip qtpim
+      -skip qtpurchasing
+      -skip qtsensors
+      -skip qtserialport
+      -skip qtspeech
+      -skip qtwebchannel
+      -skip qtwebengine
+      -skip qtwebglplugin
+      -skip qtwebsockets
+      -skip qtwebview
+      -no-assimp
       -no-rpath
       -pkg-config
       -dbus-runtime
     ]
-
-    if Hardware::CPU.arm?
-      # Temporarily fixes for Apple Silicon
-      args << "-skip" << "qtwebengine" << "-no-assimp"
-    else
-      # Should be reenabled unconditionnaly once it is fixed on Apple Silicon
-      args << "-proprietary-codecs"
-    end
 
     system "./configure", *args
 
