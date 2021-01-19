@@ -59,7 +59,7 @@ class Qt < Formula
       -qt-pcre
       -nomake examples
       -nomake tests
-      -skip designer
+      -nomake tools
       -skip help
       -skip webkit
       -skip multimedia
