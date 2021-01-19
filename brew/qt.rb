@@ -80,7 +80,6 @@ class Qt < Formula
       -skip qtwebglplugin
       -skip qtwebsockets
       -skip qtwebview
-      -no-assimp
       -no-rpath
       -pkg-config
       -dbus-runtime
