@@ -1,0 +1,316 @@
+=== modified file 'sources/documentview.cpp'
+--- sources/documentview.cpp	2021-01-19 18:34:12 +0000
++++ sources/documentview.cpp	2021-01-20 00:45:24 +0000
+@@ -1857,30 +1857,48 @@
+     }
+ }
+ 
+-void DocumentView::startPresentation()
++void DocumentView::startPresentation(QAction* action)
+ {
+     const int screen = s_settings->presentationView().screen();
+ 
+-    PresentationView* presentationView = new PresentationView(m_pages);
+-
+-    presentationView->setGeometry(QApplication::desktop()->screenGeometry(screen));
+-
+-    presentationView->show();
+-    presentationView->setAttribute(Qt::WA_DeleteOnClose);
+-
+-    connect(this, SIGNAL(destroyed()), presentationView, SLOT(close()));
+-    connect(this, SIGNAL(documentChanged()), presentationView, SLOT(close()));
+-
+-    presentationView->setRotation(rotation());
+-    presentationView->setRenderFlags(renderFlags());
+-
+-    presentationView->jumpToPage(currentPage(), false);
++    m_presentationView = new PresentationView(m_pages);
++    m_presentationAction = action;
++
++    m_presentationView->setGeometry(QApplication::desktop()->screenGeometry(screen));
++
++    m_presentationView->show();
++    m_presentationView->setAttribute(Qt::WA_DeleteOnClose);
++
++    connect(this, SIGNAL(destroyed()), m_presentationView, SLOT(close()));
++    connect(this, SIGNAL(documentChanged()), m_presentationView, SLOT(close()));
++    connect(m_presentationView, SIGNAL(destroyed()), this, SLOT(on_presentationView_destroyed()));
++
++    m_presentationView->setRotation(rotation());
++    m_presentationView->setRenderFlags(renderFlags());
++
++    m_presentationView->jumpToPage(currentPage(), false);
+ 
+     if(s_settings->presentationView().synchronize())
+     {
+-        connect(this, SIGNAL(currentPageChanged(int,bool)), presentationView, SLOT(jumpToPage(int,bool)));
+-        connect(presentationView, SIGNAL(currentPageChanged(int,bool)), this, SLOT(jumpToPage(int,bool)));
+-    }
++        connect(this, SIGNAL(currentPageChanged(int,bool)), m_presentationView, SLOT(jumpToPage(int,bool)));
++        connect(m_presentationView, SIGNAL(currentPageChanged(int,bool)), this, SLOT(jumpToPage(int,bool)));
++    }
++}
++
++void DocumentView::endPresentation()
++{
++    if(m_presentationView != NULL)
++    {
++        m_presentationView->close();
++        m_presentationView = NULL;
++    }
++}
++
++void DocumentView::on_presentationView_destroyed()
++{
++    m_presentationView = NULL;
++    m_presentationAction->setChecked(false);
++    m_presentationAction = NULL;
+ }
+ 
+ void DocumentView::on_verticalScrollBar_valueChanged()
+
+=== modified file 'sources/documentview.h'
+--- sources/documentview.h	2020-12-26 17:01:04 +0000
++++ sources/documentview.h	2021-01-20 00:44:47 +0000
+@@ -248,9 +248,11 @@
+     void rotateLeft();
+     void rotateRight();
+ 
+-    void startPresentation();
++    void startPresentation(QAction* action);
++    void endPresentation();
+ 
+ protected slots:
++    void on_presentationView_destroyed();
+     void on_verticalScrollBar_valueChanged();
+ 
+     void on_autoRefresh_timeout();
+@@ -353,6 +355,9 @@
+     QScopedPointer< QAbstractItemModel > m_outlineModel;
+     QScopedPointer< QAbstractItemModel > m_propertiesModel;
+ 
++    PresentationView* m_presentationView;
++    QAction* m_presentationAction;
++
+     bool checkDocument(const QString& filePath, Model::Document* document, QVector< Model::Page* >& pages);
+ 
+     void loadDocumentDefaults();
+
+=== modified file 'sources/mainwindow.cpp'
+--- sources/mainwindow.cpp	2021-01-19 18:20:07 +0000
++++ sources/mainwindow.cpp	2021-01-20 00:58:44 +0000
+@@ -1816,6 +1816,35 @@
+ 
+ void MainWindow::on_fullscreen_triggered(bool checked)
+ {
++    // Exit presentation mode before entering fullscreen.
++    if(checked && m_presentationAction->isChecked())
++    {
++        m_presentationAction->toggle();
++    }
++
++#ifdef Q_OS_MAC
++    // On macOS there are no issues with saving/restoring geometry as the operating
++    // system handles these just fine. On the opposite, trying to make geometry
++    // changes will cause glitches in fullscreen leave animation.
++    // However, we still cannot use showFullScreen() / showNormal() in macOS
++    // as they reset Qt::WindowMaximized state attribute, making maximised
++    // window lose its size after entering and leaving full screen.
++    ensurePolished();
++
++    if(checked)
++    {
++        m_fullscreenAction->setData(saveGeometry());
++
++        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowFullScreen);
++    }
++    else
++    {
++        setWindowState((windowState() & ~(Qt::WindowMinimized | Qt::WindowFullScreen))
++            | m_fullscreenWindowStates);
++    }
++
++    setVisible(true);
++#else
+     if(checked)
+     {
+         m_fullscreenAction->setData(saveGeometry());
+@@ -1830,17 +1859,19 @@
+ 
+         restoreGeometry(m_fullscreenAction->data().toByteArray());
+     }
+-
+-    if(s_settings->mainWindow().toggleToolAndMenuBarsWithFullscreen())
+-    {
+-        m_toggleToolBarsAction->trigger();
+-        m_toggleMenuBarAction->trigger();
+-    }
++#endif
+ }
+ 
+-void MainWindow::on_presentation_triggered()
++void MainWindow::on_presentation_triggered(bool checked)
+ {
+-    currentTab()->startPresentation();
++    if(checked)
++    {
++        currentTab()->startPresentation(m_presentationAction);
++    }
++    else
++    {
++        currentTab()->endPresentation();
++    }
+ }
+ 
+ void MainWindow::on_previousTab_triggered()
+@@ -2600,6 +2631,48 @@
+     }
+ }
+ 
++void MainWindow::changeEvent(QEvent* event)
++{
++    if(event->type() == QEvent::WindowStateChange)
++    {
++        QWindowStateChangeEvent* change = static_cast<QWindowStateChangeEvent*>(event);
++        if((change->oldState() & Qt::WindowFullScreen) != (windowState() & Qt::WindowFullScreen))
++        {
++            // At least on macOS there are numerous of ways to enter fullscreen
++            // bypassing custom controls. For this reason we need to keep
++            // fullscreen checkbox manually in sync.
++            bool inFullScreen = (windowState() & Qt::WindowFullScreen) != 0;
++            if(inFullScreen != m_fullscreenAction->isChecked())
++            {
++                bool signalState = m_fullscreenAction->blockSignals(true);
++                m_fullscreenAction->setChecked(inFullScreen);
++                m_fullscreenAction->blockSignals(signalState);
++            }
++
++            // Apply toolbars autohide preference.
++            if(s_settings->mainWindow().toggleToolAndMenuBarsWithFullscreen())
++            {
++                m_toggleToolBarsAction->trigger();
++                m_toggleMenuBarAction->trigger();
++            }
++
++            // Store window states before entering full screen.
++            // Also disable entering presentation as we cannot do it directly
++            // at least on macOS, where it is technically possible.
++            if(inFullScreen)
++            {
++                m_fullscreenWindowStates = change->oldState() & Qt::WindowMaximized;
++                m_presentationAction->setEnabled(false);
++            }
++            else
++            {
++                m_presentationAction->setEnabled(true);
++            }
++        }
++
++    }
++}
++
+ bool MainWindow::eventFilter(QObject* target, QEvent* event)
+ {
+     // This event filter is used to override any keyboard shortcuts if the outline widget has the focus.
+@@ -3240,7 +3313,8 @@
+     m_fontsAction = createAction(tr("Fonts..."), QString(), QIcon(), QKeySequence(), SLOT(on_fonts_triggered()));
+ 
+     m_fullscreenAction = createAction(tr("&Fullscreen"), QLatin1String("fullscreen"), QLatin1String("view-fullscreen"), ShortcutHandler::defaultFullscreen(), SLOT(on_fullscreen_triggered(bool)), true);
+-    m_presentationAction = createAction(tr("&Presentation..."), QLatin1String("presentation"), QLatin1String("x-office-presentation"), ShortcutHandler::defaultPresentation(), SLOT(on_presentation_triggered()));
++    m_fullscreenWindowStates = 0;
++    m_presentationAction = createAction(tr("&Presentation..."), QLatin1String("presentation"), QLatin1String("x-office-presentation"), ShortcutHandler::defaultPresentation(), SLOT(on_presentation_triggered(bool)), true);
+ 
+     // tabs
+ 
+@@ -3836,11 +3910,14 @@
+     }
+ }
+ 
+-void MainWindowAdaptor::presentation()
++void MainWindowAdaptor::presentation(bool checked)
+ {
+     ONLY_IF_CURRENT_TAB
+ 
+-    mainWindow()->on_presentation_triggered();
++    if(mainWindow()->m_presentationAction->isChecked() != checked)
++    {
++        mainWindow()->m_presentationAction->trigger();
++    }
+ }
+ 
+ void MainWindowAdaptor::closeTab()
+
+=== modified file 'sources/mainwindow.h'
+--- sources/mainwindow.h	2020-12-26 17:01:04 +0000
++++ sources/mainwindow.h	2021-01-20 00:24:14 +0000
+@@ -217,7 +217,7 @@
+     void on_fonts_triggered();
+ 
+     void on_fullscreen_triggered(bool checked);
+-    void on_presentation_triggered();
++    void on_presentation_triggered(bool checked);
+ 
+     void on_previousTab_triggered();
+     void on_nextTab_triggered();
+@@ -283,6 +283,8 @@
+ 
+     void on_saveDatabase_timeout();
+ 
++    virtual void changeEvent(QEvent* event);
++
+ protected:
+     bool eventFilter(QObject* target, QEvent* event);
+ 
+@@ -417,6 +419,7 @@
+     QAction* m_fontsAction;
+ 
+     QAction* m_fullscreenAction;
++    Qt::WindowStates m_fullscreenWindowStates;
+     QAction* m_presentationAction;
+ 
+     QAction* m_previousTabAction;
+@@ -569,7 +572,7 @@
+     Q_NOREPLY void trimMargins(bool checked);
+ 
+     Q_NOREPLY void fullscreen(bool checked);
+-    Q_NOREPLY void presentation();
++    Q_NOREPLY void presentation(bool checked);
+ 
+ 
+     Q_NOREPLY void closeTab();
+
+=== modified file 'sources/presentationview.cpp'
+--- sources/presentationview.cpp	2021-01-17 10:13:17 +0000
++++ sources/presentationview.cpp	2021-01-20 00:45:41 +0000
+@@ -380,6 +380,19 @@
+     jumpToPage(page, true);
+ }
+ 
++void PresentationView::changeEvent(QEvent* event)
++{
++    if(event->type() == QEvent::WindowStateChange)
++    {
++        QWindowStateChangeEvent* change = static_cast<QWindowStateChangeEvent*>(event);
++        if((windowState() & Qt::WindowFullScreen) == 0)
++        {
++            close();
++            event->accept();
++        }
++    }
++}
++
+ void PresentationView::resizeEvent(QResizeEvent* event)
+ {
+     QGraphicsView::resizeEvent(event);
+
+=== modified file 'sources/presentationview.h'
+--- sources/presentationview.h	2015-05-30 08:48:36 +0000
++++ sources/presentationview.h	2021-01-19 23:54:07 +0000
+@@ -96,6 +96,8 @@
+ 
+     void on_pages_linkClicked(bool newTab, int page, qreal left, qreal top);
+ 
++    virtual void changeEvent(QEvent* event);
++
+ protected:
+     void resizeEvent(QResizeEvent* event);
