@@ -33,7 +33,7 @@ jobs:
 
       - name: Install other dependencies
         # Ignore random brew failures.
-        run: brew install bzr mupdf-tools libspectre poppler djvulibre imagemagick || true
+        run: brew install bzr mupdf-tools libspectre poppler djvulibre imagemagick create-dmg || true
 
       - name: Activate mupdf
         run: |
@@ -44,7 +44,19 @@ jobs:
           FITZ_PLUGIN_LIBS="-lmupdf -lmupdf-third -lz"
           echo "FITZ_PLUGIN_LIBS=${FITZ_PLUGIN_LIBS}" >> "$GITHUB_ENV"
 
-      - name: Compile
+      - name: Compile with codesign
+        if: github.repository_owner == 'vit9696'
+        env:
+          MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+          MAC_ACCOUNT_NAME: ${{ secrets.MAC_ACCOUNT_NAME }}
+          MAC_ACCOUNT_PASSWORD: ${{ secrets.MAC_ACCOUNT_PASSWORD }}
+        run: |
+          curl -OL "https://github.com/acidanthera/ocbuild/raw/master/codesign/appsign.sh" || exit 1
+          chmod a+x appsign.sh || exit 1
+          DEPLOY_SCRIPT="$(pwd)/appsign.sh" ./qpdfview.sh
+
+      - name: Compile without codesign
+        if: github.repository_owner != 'vit9696'
         run: ./qpdfview.sh
 
       - name: Create release notes
@@ -72,4 +84,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{ env.FILENAME }}
           asset_name: ${{ env.FILENAME }}
-          asset_content_type: application/zip
+          asset_content_type: ${{ env.CONTENT_TYPE }}
