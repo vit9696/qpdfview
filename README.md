@@ -1,7 +1,7 @@
 qpdfview
 ========
 
-Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
+Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries provided for macOS 10.15 and newer. Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
 
 ## Known issues
 
@@ -9,9 +9,9 @@ Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfvi
   As a workaround there is an extra menu option to do this.
 - Poppler is preferred over mupdf when available.
   As a workaround one can delete `qpdfview.app/Contents/MacOS/libqpdfview_pdf.dylib`.
-- Presentation view may not work as expected.
+- ARM Macs require Rosetta and code signing to run.
 
-## Compilation requirements
+## Manual compilation
 
 - Be on macOS 10.13 or newer.
 - Install [Xcode](https://developer.apple.com/xcode) and [MacPorts](https://www.macports.org).
