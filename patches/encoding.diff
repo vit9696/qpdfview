@@ -1,7 +1,7 @@
 === modified file 'sources/pageitem.cpp'
---- sources/pageitem.cpp	2020-01-01 08:54:36 +0000
-+++ sources/pageitem.cpp	2020-01-02 13:30:20 +0000
-@@ -29,6 +29,7 @@
+--- sources/pageitem.cpp	2021-04-23 08:00:48 +0000
++++ sources/pageitem.cpp	2021-05-15 14:47:18 +0000
+@@ -31,6 +31,7 @@
  #include <QGraphicsScene>
  #include <QGraphicsSceneHoverEvent>
  #include <qmath.h>
@@ -9,12 +9,13 @@
  #include <QMenu>
  #include <QMessageBox>
  #include <QPainter>
-@@ -783,17 +784,106 @@
+@@ -794,19 +795,108 @@
      QMenu menu;
  
      QAction* copyTextAction = menu.addAction(tr("Copy &text"));
 +    QAction* copyCyrillicAction = menu.addAction(tr("Copy cyrillic &text"));
      QAction* selectTextAction = menu.addAction(tr("&Select text"));
+     QAction* appendTextToBookmarkCommentAction = menu.addAction(tr("&Append text to bookmark comment..."));
      const QAction* copyImageAction = menu.addAction(tr("Copy &image"));
      const QAction* saveImageToFileAction = menu.addAction(tr("Save image to &file..."));
  
@@ -24,6 +25,7 @@
      copyTextAction->setVisible(!text.isEmpty());
 +    copyCyrillicAction->setVisible(!text.isEmpty());
      selectTextAction->setVisible(!text.isEmpty() && QApplication::clipboard()->supportsSelection());
+     appendTextToBookmarkCommentAction->setVisible(!text.isEmpty());
  
      const QAction* action = menu.exec(screenPos);
  

@@ -1,7 +1,7 @@
 === modified file 'sources/documentview.cpp'
---- sources/documentview.cpp	2021-01-19 18:34:12 +0000
-+++ sources/documentview.cpp	2021-01-20 00:45:24 +0000
-@@ -1857,30 +1857,48 @@
+--- sources/documentview.cpp	2021-04-23 08:00:48 +0000
++++ sources/documentview.cpp	2021-05-15 14:57:37 +0000
+@@ -1877,11 +1877,12 @@
      }
  }
  
@@ -11,8 +11,16 @@
      const int screen = s_settings->presentationView().screen();
  
 -    PresentationView* presentationView = new PresentationView(m_pages);
--
--    presentationView->setGeometry(QApplication::desktop()->screenGeometry(screen));
++    m_presentationView = new PresentationView(m_pages);
++    m_presentationAction = action;
+ 
+ #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+ 
+@@ -1895,24 +1896,41 @@
+ 
+ #endif // QT_VERSION
+ 
+-    presentationView->setGeometry(screenGeometry);
 -
 -    presentationView->show();
 -    presentationView->setAttribute(Qt::WA_DeleteOnClose);
@@ -24,10 +32,7 @@
 -    presentationView->setRenderFlags(renderFlags());
 -
 -    presentationView->jumpToPage(currentPage(), false);
-+    m_presentationView = new PresentationView(m_pages);
-+    m_presentationAction = action;
-+
-+    m_presentationView->setGeometry(QApplication::desktop()->screenGeometry(screen));
++    m_presentationView->setGeometry(screenGeometry);
 +
 +    m_presentationView->show();
 +    m_presentationView->setAttribute(Qt::WA_DeleteOnClose);
@@ -70,9 +75,9 @@
  void DocumentView::on_verticalScrollBar_valueChanged()
 
 === modified file 'sources/documentview.h'
---- sources/documentview.h	2020-12-26 17:01:04 +0000
-+++ sources/documentview.h	2021-01-20 00:44:47 +0000
-@@ -248,9 +248,11 @@
+--- sources/documentview.h	2021-04-23 08:00:48 +0000
++++ sources/documentview.h	2021-05-15 14:56:38 +0000
+@@ -250,9 +250,11 @@
      void rotateLeft();
      void rotateRight();
  
@@ -85,7 +90,7 @@
      void on_verticalScrollBar_valueChanged();
  
      void on_autoRefresh_timeout();
-@@ -353,6 +355,9 @@
+@@ -355,6 +357,9 @@
      QScopedPointer< QAbstractItemModel > m_outlineModel;
      QScopedPointer< QAbstractItemModel > m_propertiesModel;
  
@@ -97,9 +102,9 @@
      void loadDocumentDefaults();
 
 === modified file 'sources/mainwindow.cpp'
---- sources/mainwindow.cpp	2021-01-19 18:20:07 +0000
-+++ sources/mainwindow.cpp	2021-01-20 00:58:44 +0000
-@@ -1816,6 +1816,35 @@
+--- sources/mainwindow.cpp	2021-04-23 08:00:48 +0000
++++ sources/mainwindow.cpp	2021-05-15 14:56:38 +0000
+@@ -1821,6 +1821,35 @@
  
  void MainWindow::on_fullscreen_triggered(bool checked)
  {
@@ -135,7 +140,7 @@
      if(checked)
      {
          m_fullscreenAction->setData(saveGeometry());
-@@ -1830,17 +1859,19 @@
+@@ -1835,17 +1864,19 @@
  
          restoreGeometry(m_fullscreenAction->data().toByteArray());
      }
@@ -163,7 +168,7 @@
  }
  
  void MainWindow::on_previousTab_triggered()
-@@ -2600,6 +2631,48 @@
+@@ -2577,6 +2608,48 @@
      }
  }
  
@@ -212,7 +217,7 @@
  bool MainWindow::eventFilter(QObject* target, QEvent* event)
  {
      // This event filter is used to override any keyboard shortcuts if the outline widget has the focus.
-@@ -3240,7 +3313,8 @@
+@@ -3257,7 +3330,8 @@
      m_fontsAction = createAction(tr("Fonts..."), QString(), QIcon(), QKeySequence(), SLOT(on_fonts_triggered()));
  
      m_fullscreenAction = createAction(tr("&Fullscreen"), QLatin1String("fullscreen"), QLatin1String("view-fullscreen"), ShortcutHandler::defaultFullscreen(), SLOT(on_fullscreen_triggered(bool)), true);
@@ -222,7 +227,7 @@
  
      // tabs
  
-@@ -3836,11 +3910,14 @@
+@@ -3855,11 +3929,14 @@
      }
  }
  
@@ -241,9 +246,9 @@
  void MainWindowAdaptor::closeTab()
 
 === modified file 'sources/mainwindow.h'
---- sources/mainwindow.h	2020-12-26 17:01:04 +0000
-+++ sources/mainwindow.h	2021-01-20 00:24:14 +0000
-@@ -217,7 +217,7 @@
+--- sources/mainwindow.h	2021-04-23 08:00:48 +0000
++++ sources/mainwindow.h	2021-05-15 14:56:38 +0000
+@@ -218,7 +218,7 @@
      void on_fonts_triggered();
  
      void on_fullscreen_triggered(bool checked);
@@ -252,7 +257,7 @@
  
      void on_previousTab_triggered();
      void on_nextTab_triggered();
-@@ -283,6 +283,8 @@
+@@ -284,6 +284,8 @@
  
      void on_saveDatabase_timeout();
  
@@ -261,7 +266,7 @@
  protected:
      bool eventFilter(QObject* target, QEvent* event);
  
-@@ -417,6 +419,7 @@
+@@ -420,6 +422,7 @@
      QAction* m_fontsAction;
  
      QAction* m_fullscreenAction;
@@ -269,7 +274,7 @@
      QAction* m_presentationAction;
  
      QAction* m_previousTabAction;
-@@ -569,7 +572,7 @@
+@@ -572,7 +575,7 @@
      Q_NOREPLY void trimMargins(bool checked);
  
      Q_NOREPLY void fullscreen(bool checked);
@@ -280,9 +285,9 @@
      Q_NOREPLY void closeTab();
 
 === modified file 'sources/presentationview.cpp'
---- sources/presentationview.cpp	2021-01-17 10:13:17 +0000
-+++ sources/presentationview.cpp	2021-01-20 00:45:41 +0000
-@@ -380,6 +380,19 @@
+--- sources/presentationview.cpp	2021-04-18 17:24:01 +0000
++++ sources/presentationview.cpp	2021-05-15 14:56:38 +0000
+@@ -381,6 +381,19 @@
      jumpToPage(page, true);
  }
  
@@ -305,7 +310,7 @@
 
 === modified file 'sources/presentationview.h'
 --- sources/presentationview.h	2015-05-30 08:48:36 +0000
-+++ sources/presentationview.h	2021-01-19 23:54:07 +0000
++++ sources/presentationview.h	2021-05-15 14:56:38 +0000
 @@ -96,6 +96,8 @@
  
      void on_pages_linkClicked(bool newTab, int page, qreal left, qreal top);
