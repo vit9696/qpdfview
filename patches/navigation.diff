@@ -1,0 +1,15 @@
+=== modified file 'sources/presentationview.cpp'
+--- sources/presentationview.cpp	2021-04-18 17:24:01 +0000
++++ sources/presentationview.cpp	2021-05-15 17:09:10 +0000
+@@ -391,7 +405,9 @@
+ 
+ void PresentationView::keyPressEvent(QKeyEvent* event)
+ {
+-    switch(event->modifiers() | event->key())
++    int modifiers = event->modifiers() & ~Qt::KeypadModifier;
++
++    switch(modifiers | event->key())
+     {
+     case Qt::Key_PageUp:
+     case Qt::Key_Up:
+
