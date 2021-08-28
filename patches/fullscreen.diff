@@ -222,7 +222,7 @@
  
      m_fullscreenAction = createAction(tr("&Fullscreen"), QLatin1String("fullscreen"), QLatin1String("view-fullscreen"), ShortcutHandler::defaultFullscreen(), SLOT(on_fullscreen_triggered(bool)), true);
 -    m_presentationAction = createAction(tr("&Presentation..."), QLatin1String("presentation"), QLatin1String("x-office-presentation"), ShortcutHandler::defaultPresentation(), SLOT(on_presentation_triggered()));
-+    m_fullscreenWindowStates = 0;
++    m_fullscreenWindowStates = Qt::WindowNoState;
 +    m_presentationAction = createAction(tr("&Presentation..."), QLatin1String("presentation"), QLatin1String("x-office-presentation"), ShortcutHandler::defaultPresentation(), SLOT(on_presentation_triggered(bool)), true);
  
      // tabs
