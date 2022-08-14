@@ -61,7 +61,7 @@ compile_bundle() {
   fi
 
   if [ "$FITZ_PLUGIN_LIBS" = "" ]; then
-    FITZ_PLUGIN_LIBS="-lmupdf -lmupdf-third -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2"
+    FITZ_PLUGIN_LIBS="-lmupdf -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2"
   fi
 
   qmake APP_DIR_DATA_PATH=../Resources CONFIG+=with_fitz \
