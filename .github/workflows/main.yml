@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         # Ignore random brew failures.
-        run: brew install qt bzr mupdf-tools libspectre freetype poppler-qt6 djvulibre imagemagick create-dmg || true
+        run: brew install qt bzr mupdf-tools libspectre freetype harfbuzz poppler-qt6 djvulibre imagemagick create-dmg || true
 
       - name: Activate mupdf
         run: |
