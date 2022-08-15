@@ -120,6 +120,13 @@ bundle_icon() {
   /usr/libexec/PlistBuddy -c 'Add CFBundleIconFile string qpdfview' "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
 }
 
+bundle_icon_premade() {
+  echo "Bundling icon file..."
+  cp "${SELF_DIR}/qpdfview.icns" "${QPDFVIEW_APP}/Contents/Resources/qpdfview.icns" || exit 1
+  /usr/libexec/PlistBuddy -c 'Delete CFBundleIconFile' "${QPDFVIEW_APP}/Contents/Info.plist" &>/dev/null
+  /usr/libexec/PlistBuddy -c 'Add CFBundleIconFile string qpdfview' "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
+}
+
 bundle_formats() {
   echo "Bundling finder formats..."
   /usr/libexec/PlistBuddy -c 'Delete CFBundleDocumentTypes' "${QPDFVIEW_APP}/Contents/Info.plist" &>/dev/null
@@ -185,7 +192,7 @@ compile_bundle
 bundle_plugins
 bundle_translations
 bundle_help
-bundle_icon
+bundle_icon_premade
 bundle_formats
 bundle_fonts
 deploy_bundle

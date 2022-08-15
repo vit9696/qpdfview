@@ -23,11 +23,11 @@ Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfvi
 - Be on macOS 10.13 or newer.
 - Install [Xcode](https://developer.apple.com/xcode) and [HomeBrew](https://brew.sh).
 - Add poppler-qt6 repo dependency
-- Install the following ports: `bzr qt mupdf-tools libspectre poppler-qt6 djvulibre imagemagick`
+- Install the following formulae: `qt bzr mupdf-tools mujs lcms2 libspectre freetype harfbuzz poppler-qt6 djvulibre lcms2 imagemagick create-dmg`
 - Run the following commands to export fitz paths:
     ```
     export FITZ_PLUGIN_INCLUDEPATH=$(brew --prefix mupdf-tools)/include
     export FITZ_PLUGIN_LINKPATH=$(brew --prefix mupdf-tools)/lib
-    export FITZ_PLUGIN_LIBS="-lmupdf -lz"
+    export FITZ_PLUGIN_LIBS="-lmupdf -lmupdf-third -L$(brew --prefix mujs)/lib -lmujs -L$(brew --prefix freetype)/lib -lfreetype -L$(brew --prefix harfbuzz)/lib -lharfbuzz -lz -L$(brew --prefix jpeg)/lib -ljpeg -L$(brew --prefix jbig2dec)/lib -ljbig2dec -L$(brew --prefix openjpeg)/lib -lopenjp2 -L$(brew --prefix lcms2)/lib -llcms2
     ```
 - Execute `qpdfview.sh` from terminal.
