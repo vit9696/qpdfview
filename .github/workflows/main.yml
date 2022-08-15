@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         # Ignore random brew failures.
-        run: brew install qt bzr mupdf-tools libspectre freetype harfbuzz poppler-qt6 djvulibre imagemagick create-dmg || true
+        run: brew install qt bzr mupdf-tools libspectre freetype harfbuzz poppler-qt6 djvulibre lcms2 imagemagick create-dmg || true
 
       - name: Activate mupdf
         run: |
@@ -38,7 +38,7 @@ jobs:
           echo "FITZ_PLUGIN_INCLUDEPATH=${FITZ_PLUGIN_INCLUDEPATH}" >> "$GITHUB_ENV"
           FITZ_PLUGIN_LINKPATH=$(brew --prefix mupdf-tools)/lib
           echo "FITZ_PLUGIN_LINKPATH=${FITZ_PLUGIN_LINKPATH}" >> "$GITHUB_ENV"
-          FITZ_PLUGIN_LIBS="-lmupdf -L$(brew --prefix freetype)/lib -lfreetype -L$(brew --prefix harfbuzz)/lib -lharfbuzz -lz -L$(brew --prefix jpeg)/lib -ljpeg -L$(brew --prefix jbig2dec)/lib -ljbig2dec -L$(brew --prefix openjpeg)/lib -lopenjp2"
+          FITZ_PLUGIN_LIBS="-lmupdf -lmujs -L$(brew --prefix freetype)/lib -lfreetype -L$(brew --prefix harfbuzz)/lib -lharfbuzz -lz -L$(brew --prefix jpeg)/lib -ljpeg -L$(brew --prefix jbig2dec)/lib -ljbig2dec -L$(brew --prefix openjpeg)/lib -lopenjp2 -L$(brew --prefix lcms2)/lib -lcms2" 
           echo "FITZ_PLUGIN_LIBS=${FITZ_PLUGIN_LIBS}" >> "$GITHUB_ENV"
 
       - name: Compile with codesign
