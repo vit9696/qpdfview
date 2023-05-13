@@ -30,7 +30,13 @@ jobs:
 
       - name: Install dependencies
         # Ignore random brew failures.
-        run: brew install qt breezy mupdf-tools mujs lcms2 libspectre freetype harfbuzz poppler-qt6 djvulibre lcms2 create-dmg || true
+        run: brew install qt breezy mupdf-tools mujs lcms2 libspectre freetype harfbuzz djvulibre lcms2 create-dmg || true
+
+      - name: Install poppler-qt6 from source
+        run: brew install poppler-qt6 -s
+
+      - name: Install launchpadlib
+        run: python3 -m pip install launchpadlib
 
       - name: Activate mupdf
         run: |
