@@ -19,7 +19,7 @@ export PATH="$PATH:/opt/local/libexec/qt5/bin"
 
 check_depedencies() {
   echo "Checking dependencies..."
-  for tool in bzr qmake make macdeployqt patch; do
+  for tool in qmake make macdeployqt patch; do
     if [ "$(which ${tool})" = "" ]; then
       echo "${tool} is missing"
       exit 1
@@ -34,7 +34,7 @@ obtain_sources() {
     return
   fi
 
-  bzr branch lp:qpdfview dist -r "${QPDFVIEW_REV}" || exit 1
+  python3 -m breezy branch lp:qpdfview dist -r "${QPDFVIEW_REV}" || exit 1
 
   pushd "${QPDFVIEW_DIR}" &>/dev/null || exit 1
 
@@ -53,15 +53,15 @@ compile_bundle() {
   pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
 
   if [ "$FITZ_PLUGIN_INCLUDEPATH" = "" ]; then
-    FITZ_PLUGIN_INCLUDEPATH=/opt/local/include
+    FITZ_PLUGIN_INCLUDEPATH=$(brew --prefix mupdf-tools)/include
   fi
 
   if [ "$FITZ_PLUGIN_LINKPATH" = "" ]; then
-    FITZ_PLUGIN_LINKPATH=/opt/local/lib
+    FITZ_PLUGIN_LINKPATH=$(brew --prefix mupdf-tools)/lib
   fi
 
   if [ "$FITZ_PLUGIN_LIBS" = "" ]; then
-    FITZ_PLUGIN_LIBS="-lmupdf -lfreetype -lharfbuzz -lz -ljpeg -ljbig2dec -lopenjp2"
+    FITZ_PLUGIN_LIBS="-lmupdf -lmupdf-third -L$(brew --prefix mujs)/lib -lmujs -L$(brew --prefix freetype)/lib -lfreetype -L$(brew --prefix harfbuzz)/lib -lharfbuzz -lz -L$(brew --prefix jpeg)/lib -ljpeg -L$(brew --prefix jbig2dec)/lib -ljbig2dec -L$(brew --prefix openjpeg)/lib -lopenjp2 -L$(brew --prefix lcms2)/lib -llcms2"
   fi
 
   qmake APP_DIR_DATA_PATH=../Resources CONFIG+=with_fitz \
