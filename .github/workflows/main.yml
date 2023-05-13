@@ -23,14 +23,14 @@ jobs:
           echo "QPDFVIEW_EDITION=${QPDFVIEW_EDITION}" >> "$GITHUB_ENV"
 
       - name: Add brew repo with poppler-qt6
-        run: brew tap muzimuzhi/texstudio-beta
+        run: brew tap muzimuzhi/homebrew-poppler-build
 
       - name: Update brew
         run: brew update
 
       - name: Install dependencies
         # Ignore random brew failures.
-        run: brew install qt bzr mupdf-tools mujs lcms2 libspectre freetype harfbuzz poppler-qt6 djvulibre lcms2 imagemagick create-dmg || true
+        run: brew install qt breezy mupdf-tools mujs lcms2 libspectre freetype harfbuzz poppler-qt6 djvulibre lcms2 create-dmg || true
 
       - name: Activate mupdf
         run: |

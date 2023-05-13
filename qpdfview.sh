@@ -9,7 +9,7 @@ WORK_DIR="$(pwd)"
 QPDFVIEW_BDIR="${WORK_DIR}/build"
 QPDFVIEW_DIR="${WORK_DIR}/dist"
 QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
-QPDFVIEW_REV=2143
+QPDFVIEW_REV=2153
 if [ "${QPDFVIEW_EDITION}" = "" ]; then
   QPDFVIEW_EDITION=1
 fi
@@ -19,7 +19,7 @@ export PATH="$PATH:/opt/local/libexec/qt5/bin"
 
 check_depedencies() {
   echo "Checking dependencies..."
-  for tool in bzr qmake make convert macdeployqt patch; do
+  for tool in bzr qmake make macdeployqt patch; do
     if [ "$(which ${tool})" = "" ]; then
       echo "${tool} is missing"
       exit 1

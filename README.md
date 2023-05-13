@@ -15,7 +15,7 @@ Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfvi
 
 - Be on macOS 10.13 or newer.
 - Install [Xcode](https://developer.apple.com/xcode) and [MacPorts](https://www.macports.org).
-- Install the following ports: `bzr qt5 mupdf libspectre poppler-qt5 djvulibre imagemagick`
+- Install the following ports: `breezy qt5 mupdf libspectre poppler-qt5 djvulibre imagemagick`
 - Execute `qpdfview.sh` from terminal.
 
 ## Manual compilation with HomeBrew
