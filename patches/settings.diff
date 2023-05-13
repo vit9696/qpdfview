@@ -1,0 +1,61 @@
+=== modified file 'sources/settings.h'
+--- sources/settings.h	2021-04-18 18:53:43 +0000
++++ sources/settings.h	2023-05-13 08:47:59 +0000
+@@ -515,13 +515,13 @@
+     class PageItem
+     {
+     public:
+-        static int cacheSize() { return 32 * 1024; }
++        static int cacheSize() { return 512 * 1024; }
+ 
+-        static bool useTiling() { return false; }
++        static bool useTiling() { return true; }
+         static int tileSize() { return 1024; }
+ 
+         static bool keepObsoletePixmaps() { return false; }
+-        static bool useDevicePixelRatio() { return false; }
++        static bool useDevicePixelRatio() { return true; }
+         static bool useLogicalDpi() { return true; }
+ 
+         static bool decoratePages() { return true; }
+@@ -569,8 +569,8 @@
+ 
+         static int autoRefreshTimeout() { return 750; }
+ 
+-        static bool prefetch() { return false; }
+-        static int prefetchDistance() { return 1; }
++        static bool prefetch() { return true; }
++        static int prefetchDistance() { return 5; }
+ 
+         static int prefetchTimeout() { return 250; }
+ 
+@@ -607,7 +607,7 @@
+ 
+         // per-tab defaults
+ 
+-        static bool continuousMode() { return false; }
++        static bool continuousMode() { return true; }
+         static LayoutMode layoutMode() { return SinglePageMode; }
+         static bool rightToLeftMode();
+ 
+@@ -630,13 +630,13 @@
+     class MainWindow
+     {
+     public:
+-        static bool trackRecentlyUsed() { return false; }
+-        static int recentlyUsedCount() { return 10; }
+-
+-        static bool keepRecentlyClosed() { return false; }
+-        static int recentlyClosedCount() { return 5; }
+-
+-        static bool restoreTabs() { return false; }
++        static bool trackRecentlyUsed() { return true; }
++        static int recentlyUsedCount() { return 25; }
++
++        static bool keepRecentlyClosed() { return true; }
++        static int recentlyClosedCount() { return 25; }
++
++        static bool restoreTabs() { return true; }
+         static bool restoreBookmarks() { return false; }
+         static bool restorePerFileSettings() { return false; }
+ 
