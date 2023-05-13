@@ -148,10 +148,20 @@ bundle_fonts() {
   cp -r "$FONTCONFIG_PATH" "${QPDFVIEW_APP}/Contents/Resources/fonts" || exit 1
 }
 
+get_version() {
+  local version=$(cat "${QPDFVIEW_DIR}/qpdfview.pri" | grep APPLICATION_VERSION | sed 's/.*= //')
+  local revision="r${QPDFVIEW_REV}u${QPDFVIEW_EDITION}"
+  local full_version="${version}-${revision}"
+  echo "$full_version"
+}
+
 deploy_bundle() {
   echo "Deploying bundle..."
   /usr/libexec/PlistBuddy -c 'Delete CFBundleIdentifier' "${QPDFVIEW_APP}/Contents/Info.plist" &>/dev/null
   /usr/libexec/PlistBuddy -c 'Add CFBundleIdentifier string as.vit9696.qpdfview' "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
+  local full_version="$(get_version)"
+  /usr/libexec/PlistBuddy -c "Add CFBundleVersion string ${full_version}" "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
+  /usr/libexec/PlistBuddy -c "Add CFBundleShortVersionString string ${full_version}" "${QPDFVIEW_APP}/Contents/Info.plist" || exit 1
   macdeployqt "${QPDFVIEW_APP}" || exit 1
 }
 
@@ -159,8 +169,7 @@ archive_bundle() {
   echo "Archiving bundle..."
   pushd "${QPDFVIEW_BDIR}" &>/dev/null || exit 1
 
-  local version=$(cat "${QPDFVIEW_DIR}/qpdfview.pri" | grep APPLICATION_VERSION | sed 's/.*= //')
-  local revision="r${QPDFVIEW_REV}u${QPDFVIEW_EDITION}"
+  local full_version="$(get_version)"
   if [ -x "$DEPLOY_SCRIPT" ]; then
     local extension="dmg"
     local mime="application/octet-stream"
@@ -168,7 +177,7 @@ archive_bundle() {
     local extension="zip"
     local mime="application/zip"
   fi
-  local name="qpdfview-${version}-${revision}.${extension}"
+  local name="qpdfview-${full_version}.${extension}"
 
   if [ "$GITHUB_ENV" != "" ]; then
     echo "VERSION=${version}" >> "$GITHUB_ENV"
