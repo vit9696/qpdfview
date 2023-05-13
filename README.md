@@ -1,7 +1,7 @@
 qpdfview
 ========
 
-Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries provided for macOS 10.15 and newer. Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
+Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries provided for macOS 11 and newer. Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
 
 ## Known issues
 
