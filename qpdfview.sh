@@ -9,13 +9,10 @@ WORK_DIR="$(pwd)"
 QPDFVIEW_BDIR="${WORK_DIR}/build"
 QPDFVIEW_DIR="${WORK_DIR}/dist"
 QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
-QPDFVIEW_REV=2153
+QPDFVIEW_REV=2161
 if [ "${QPDFVIEW_EDITION}" = "" ]; then
   QPDFVIEW_EDITION=1
 fi
-
-# Add Qt tools to PATH
-export PATH="$PATH:/opt/local/libexec/qt5/bin"
 
 check_depedencies() {
   echo "Checking dependencies..."
