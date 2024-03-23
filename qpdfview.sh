@@ -78,6 +78,7 @@ bundle_plugins() {
 bundle_translations() {
   echo "Bundling translation files..."
   local tl_dir="${QPDFVIEW_APP}/Contents/Resources"
+  mkdir -p "${tl_dir}"
   for tl in "${QPDFVIEW_DIR}/translations"/*.ts; do
     tl_file=$(basename "${tl/.ts/.qm}")
     lconvert -i "${tl}" -o "${tl_dir}/${tl_file}" || exit 1
