@@ -8,8 +8,12 @@ on:
 
 jobs:
   build:
-    name: Build qpdfview
-    runs-on: [macos-11, macos-14]
+    strategy:
+      matrix:
+        os: [macos-11, macos-14]
+
+    name: Build qpdfview for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
