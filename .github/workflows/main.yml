@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build qpdfview
-    runs-on: macos-11
+    runs-on: [macos-11, macos-14]
 
     steps:
       - name: Checkout
