@@ -40,7 +40,7 @@ jobs:
         run: brew install poppler-qt6 -s
 
       - name: Install launchpadlib
-        run: python3 -m pip install breezy launchpadlib
+        run: python3 -m pip install --break-system-packages breezy launchpadlib
 
       - name: Activate mupdf
         run: |
