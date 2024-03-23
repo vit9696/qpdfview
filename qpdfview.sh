@@ -171,7 +171,7 @@ archive_bundle() {
     local extension="zip"
     local mime="application/zip"
   fi
-  local name="qpdfview-${full_version}.${extension}"
+  local name="qpdfview-${full_version}-$(uname -m).${extension}"
 
   if [ "$GITHUB_ENV" != "" ]; then
     echo "VERSION=${version}" >> "$GITHUB_ENV"
