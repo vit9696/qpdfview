@@ -72,24 +72,25 @@ jobs:
 
       - name: Create release
         if: github.repository_owner == 'vit9696'
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ env.REVISION }}
-          release_name: qpdfview ${{ env.VERSION }} (${{ env.REVISION }})
-          body_path: release_notes.md
+          # Create release on each commit
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: qpdfview ${{ env.VERSION }} (${{ env.REVISION }})
+          commit: ${{ github.sha }}
+          tag: ${{ env.REVISION }}
+          bodyFile: release_notes.md
           draft: false
           prerelease: false
-
-      - name: Upload release
-        if: github.repository_owner == 'vit9696'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.FILENAME }}
-          asset_name: ${{ env.FILENAME }}
-          asset_content_type: ${{ env.CONTENT_TYPE }}
+          # Upload artifacts
+          artifacts: ${{ env.FILENAME }}
+          artifactContentType: ${{ env.CONTENT_TYPE }}
+          # Allow parallel releases, which only add new artifacts.
+          allowUpdates: true
+          skipIfReleaseExists: false
+          updateOnlyUnreleased: false
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          removeArtifacts: false
+          replacesArtifacts: false
