@@ -1,7 +1,16 @@
 qpdfview
 ========
 
-Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries provided for macOS 11 and newer. Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
+Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries are provided for the following macOS versions:
+
+* [Latest for Apple Silicon](https://github.com/vit9696/qpdfview/releases/latest) — macOS 14 or newer
+* [Latest for Intel](https://github.com/vit9696/qpdfview/releases/latest) — macOS 12 or newer
+* [0.5.0-r2153 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2153u71) — macOS 11 or newer
+* [0.4.99-r2143 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2143u64) — macOS 10.15 or newer
+* [0.4.99-r2126 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2126u40) — macOS 10.13 or newer
+
+Changelogs can be found at [launchpad.net](https://bazaar.launchpad.net/~adamreichold/qpdfview/trunk/changes).
+Unofficial Windows binaries can be found at [darealshinji/qpdfview](https://github.com/darealshinji/qpdfview).
 
 ## Known issues
 
@@ -9,7 +18,6 @@ Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfvi
   As a workaround there is an extra menu option to do this.
 - Poppler is preferred over mupdf when available.
   As a workaround one can delete `qpdfview.app/Contents/MacOS/libqpdfview_pdf.dylib`.
-- ARM Macs require Rosetta and code signing to run.
 
 ## Manual compilation with HomeBrew
 
