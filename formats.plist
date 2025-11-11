@@ -20,7 +20,7 @@
 			<key>ICExtension</key>
 			<string>PDF</string>
 			<key>LSIsAppleDefaultForType</key>
-			<string>Yes</string>
+			<true/>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.apple.localized-pdf-bundle</string>
@@ -40,7 +40,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSIsAppleDefaultForType</key>
-			<string>Yes</string>
+			<true/>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.adobe.encapsulated-postscript</string>
