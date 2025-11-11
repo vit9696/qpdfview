@@ -28,7 +28,7 @@ jobs:
           echo "QPDFVIEW_EDITION=${QPDFVIEW_EDITION}" >> "$GITHUB_ENV"
 
       - name: Add brew repo with poppler-qt6
-        run: brew tap muzimuzhi/homebrew-poppler-build
+        run: brew tap gocram/poppler-qt6
 
       - name: Update brew
         run: brew update
