@@ -40,9 +40,6 @@ jobs:
       - name: Install poppler-qt6 from source
         run: brew install poppler-qt6 -s
 
-      - name: Install launchpadlib
-        run: python3 -m pip install --break-system-packages breezy launchpadlib
-
       - name: Activate mupdf
         run: |
           FITZ_PLUGIN_INCLUDEPATH=$(brew --prefix mupdf-tools)/include

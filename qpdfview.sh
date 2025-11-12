@@ -9,7 +9,9 @@ WORK_DIR="$(pwd)"
 QPDFVIEW_BDIR="${WORK_DIR}/build"
 QPDFVIEW_DIR="${WORK_DIR}/dist"
 QPDFVIEW_APP="${QPDFVIEW_BDIR}/qpdfview.app"
-QPDFVIEW_REV=2161
+# TODO: Reconsider version numbering.
+QPDFVIEW_REV=2165
+QPDFVIEW_COMMIT=6626a6d6631b131ed8e84c50720237e3a93d9788
 if [ "${QPDFVIEW_EDITION}" = "" ]; then
   QPDFVIEW_EDITION=1
 fi
@@ -31,9 +33,10 @@ obtain_sources() {
     return
   fi
 
-  python3 -m breezy branch lp:qpdfview dist -r "${QPDFVIEW_REV}" || exit 1
-
+  git clone https://git.launchpad.net/qpdfview dist || exit 1
   pushd "${QPDFVIEW_DIR}" &>/dev/null || exit 1
+
+  git checkout "${QPDFVIEW_COMMIT}" || exit 1
 
   for patch in "${SELF_DIR}/patches"/*.diff; do
     echo "Applying ${patch}"
