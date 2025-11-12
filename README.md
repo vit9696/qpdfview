@@ -4,7 +4,8 @@ qpdfview
 Unofficial build scripts and patches for [qpdfview](https://launchpad.net/qpdfview) document viewer for macOS. Binaries are provided for the following macOS versions:
 
 * [Latest for Apple Silicon](https://github.com/vit9696/qpdfview/releases/latest) — macOS 14 or newer
-* [Latest for Intel](https://github.com/vit9696/qpdfview/releases/latest) — macOS 12 or newer
+* [Latest for Intel](https://github.com/vit9696/qpdfview/releases/latest) — macOS 13 or newer
+* [0.5.0-r2161 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2161u81) — macOS 12 or newer
 * [0.5.0-r2153 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2153u71) — macOS 11 or newer
 * [0.4.99-r2143 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2143u64) — macOS 10.15 or newer
 * [0.4.99-r2126 for Intel](https://github.com/vit9696/qpdfview/releases/tag/r2126u40) — macOS 10.13 or newer
